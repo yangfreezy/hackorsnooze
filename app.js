@@ -9,6 +9,9 @@ $(function() {
     let $articleList = $(".article-list");
     let $username = $("#username").val();
     let $passwordSignUp = $("#password-sign-up").val();
+    let $passwordConfirm = $("#confirm-password").val();
+    let $email = $("#email").val();
+
 
     $form.hide();
     $logInForm.hide();
@@ -31,19 +34,29 @@ $(function() {
         $form.hide();
     });
 
-    $(".sign-up").on("submit", function() {
-        $.ajax({
-             method: "POST",
-             url: "https://hack-or-snooze.herokuapp.com/auth",
-             data: {
-                  data: {
-                    username: "testingagain",
-                    password: "secret"
-                 }
-               }
-            }).then(function(val) {
-                 localStorage.setItem("token", val.data.token);
-        })
+    $signUpForm.on("submit", function() {
+        console.log($passwordConfirm);
+        console.log($email);
+        console.log($passwordSignUp !== $passwordConfirm);
+
+        if ($passwordSignUp !== $passwordConfirm) {
+            alert("Passwords must match!");
+        } else {
+        // $.ajax({
+        //      method: "POST",
+        //      url: "https://hack-or-snooze.herokuapp.com/users",
+        //      data: {
+        //           data: {
+        //             username: $username,
+        //             password: $passwordSignUp,
+        //             passwordConfirm: $passwordConfirm,
+        //             email: $email
+        //          }
+        //        }
+        //     }).then(function(val) {
+        //          localStorage.setItem("token", val.data.token);
+        // });
+        };
     });
     
 

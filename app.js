@@ -53,9 +53,6 @@ $(function() {
         $form.hide();
     });
 
-    let userProfile;
-    let userProfileName;
-
     $signUpForm.on("submit", function() {
         $.ajax({
             method: "POST",
@@ -70,10 +67,8 @@ $(function() {
         }).then(function(val) {
             localStorage.setItem("username", val.data.username);
             localStorage.setItem("name", val.data.name);
-            userProfile = localStorage.getItem("username");
-            userProfileName = localStorage.getItem("name");
-
-            console.log(userProfile, userProfileName);
+            localStorage.getItem("username");
+            localStorage.getItem("name");
         });
         $("#sign-up-form")
             .get(0)

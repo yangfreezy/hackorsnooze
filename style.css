@@ -1,0 +1,49 @@
+.big-container {
+    background-color: #f6f6ef;
+    width: 800px;
+    margin: 50px auto;
+    padding-bottom: 10px;
+}
+
+.navbar {
+    border-radius: 5px;
+    height: 40px;
+}
+
+.header {
+    background-color: #ff6600;
+}
+
+.home-link {
+    font-weight: bold;
+}
+
+.form {
+    text-align: center;
+    width: 300px;
+    margin: 0 auto;
+    padding-bottom: 20px;
+    padding-top: 10px;
+}
+
+.btn {
+    background-color: #cccccc;
+}
+
+ol li {
+    font-size: 14px;
+}
+
+li a {
+    color: black;
+    text-decoration: none;
+}
+
+li a:hover {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.hostlink {
+    color: grey;
+}

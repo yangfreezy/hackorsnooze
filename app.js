@@ -1,21 +1,24 @@
-let $form = $(".submit-form");
-
 $(function() {
-
+    let $form = $(".submit-form");
     let $logIn = $(".log-in");
     let $logInForm = $("#log-in-form");
     let $signUp = $(".sign-up");
     let $signUpForm = $("#sign-up-form");
     let $articleList = $(".article-list");
-    let $username = $("#username").val();
-    let $passwordSignUp = $("#password-sign-up").val();
-    let $passwordConfirm = $("#confirm-password").val();
-    let $email = $("#email").val();
-
+    let $username = $("#username");
+    let $passwordSignUp = $("#password-sign-up");
+    let $email = $("#email");
 
     $form.hide();
     $logInForm.hide();
     $signUpForm.hide();
+
+    $.ajax({
+        method: "GET",
+        url: "https://hack-or-snooze.herokuapp.com/stories"
+    }).then(function(val) {
+        console.log(val);
+    }) 
 
     $(".home-link").on("click", function() {
         $form.hide();
@@ -28,35 +31,49 @@ $(function() {
         $signUpForm.hide();
     })
 
+    $logInForm.on("submit", function() {
+        $.ajax({
+            method: "POST",
+            url: "https://hack-or-snooze.herokuapp.com/auth",
+            data: {
+                data: {
+                    username: "JohnSmith",
+                    password: "johnnyboy"
+                }
+            }
+        }).then(function(val) {
+            localStorage.setItem("token", val.data.token);
+            console.log("it worked");
+        });
+    });
+
     $(".sign-up").on("click", function() {
         $signUpForm.toggle();
         $logInForm.hide();
         $form.hide();
     });
 
-    $signUpForm.on("submit", function() {
-        console.log($passwordConfirm);
-        console.log($email);
-        console.log($passwordSignUp !== $passwordConfirm);
+    let token;
 
-        if ($passwordSignUp !== $passwordConfirm) {
-            alert("Passwords must match!");
-        } else {
-        // $.ajax({
-        //      method: "POST",
-        //      url: "https://hack-or-snooze.herokuapp.com/users",
-        //      data: {
-        //           data: {
-        //             username: $username,
-        //             password: $passwordSignUp,
-        //             passwordConfirm: $passwordConfirm,
-        //             email: $email
-        //          }
-        //        }
-        //     }).then(function(val) {
-        //          localStorage.setItem("token", val.data.token);
-        // });
-        };
+    $signUpForm.on("submit", function() {
+        console.log($username.val());
+     console.log($passwordSignUp.val());
+     console.log($email.val());
+
+        $.ajax({
+             method: "POST",
+             url: "https://hack-or-snooze.herokuapp.com/users",
+             data: {
+                  data: {
+                    username: $username,
+                    password: $passwordSignUp,
+                    email: $email
+                 }
+               }
+            }).then(function(val) {
+                token = localStorage.setItem("token", val.data.token);
+                console.log(token);
+        });
     });
     
 

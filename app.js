@@ -1,7 +1,15 @@
-let $form = $("form");
+let $form = $(".submit-form");
 
 $(function() {
+
+    let $logIn = $(".log-in");
+    let $logInForm = $("#log-in-form");
+    let $signUp = $(".sign-up");
+    let $signUpForm = $(".sign-up-form");
+    let $articleList = $(".article-list");
+
     $form.hide();
+    $logInForm.hide();
 
     $(".home-link").on("click", function() {
         $form.hide();
@@ -9,8 +17,19 @@ $(function() {
     });
 
     $(".submit-link").on("click", function() {
-        $form.show();
+        $form.toggle();
         $("li").show();
+        $logInForm.hide();
+    });
+
+    $logIn.on("click", function() {
+        $logInForm.toggle();
+        $form.hide();
+    })
+
+    $(".sign-up").on("click", function() {
+        $signUpForm.show();
+        $.show();
     });
 
     $form.on("submit", function(event) {
@@ -64,4 +83,6 @@ $(function() {
             $("li").show();
         }
     });
+
+    
 });

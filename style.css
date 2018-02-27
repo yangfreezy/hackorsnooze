@@ -18,7 +18,7 @@
     font-weight: bold;
 }
 
-.form {
+.submit-form {
     text-align: center;
     width: 300px;
     margin: 0 auto;
@@ -26,10 +26,27 @@
     padding-top: 10px;
 }
 
+.article-list {
+    padding-top: 20px;
+}
+
 .btn {
     background-color: #cccccc;
 }
-
+.btn-primary {
+    background-color: black;
+    text-align: center;
+    border: 1px solid black;
+    margin: 25px;
+    margin-left: 100px;
+ }
+ .btn-primary:hover {
+    background-color: black;
+    text-align: center;
+    border: 1px solid black;
+    margin: 25px;
+    margin-left: 100px;
+ }
 ol li {
     font-size: 14px;
 }
@@ -47,3 +64,16 @@ li a:hover {
 .hostlink {
     color: grey;
 }
+
+.sign-up {
+
+}
+
+.log-in {
+
+}
+
+#log-in-form {
+    margin: 2rem;
+}
+

@@ -23,7 +23,7 @@
     width: 300px;
     margin: 0 auto;
     padding-bottom: 20px;
-    padding-top: 10px;
+    padding-top: 20px;
 }
 
 .article-list {
@@ -65,10 +65,6 @@ li a:hover {
     color: grey;
 }
 
-.sign-up {
-
-}
-
 .log-in {
 
 }
@@ -77,3 +73,6 @@ li a:hover {
     margin: 2rem;
 }
 
+#sign-up-form {
+    margin: 2rem;
+}

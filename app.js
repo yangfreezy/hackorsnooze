@@ -5,11 +5,12 @@ $(function() {
     let $logIn = $(".log-in");
     let $logInForm = $("#log-in-form");
     let $signUp = $(".sign-up");
-    let $signUpForm = $(".sign-up-form");
+    let $signUpForm = $("#sign-up-form");
     let $articleList = $(".article-list");
 
     $form.hide();
     $logInForm.hide();
+    $signUpForm.hide();
 
     $(".home-link").on("click", function() {
         $form.hide();
@@ -20,16 +21,19 @@ $(function() {
         $form.toggle();
         $("li").show();
         $logInForm.hide();
+        $signUpForm.hide();
     });
 
     $logIn.on("click", function() {
         $logInForm.toggle();
         $form.hide();
+        $signUpForm.hide();
     })
 
     $(".sign-up").on("click", function() {
-        $signUpForm.show();
-        $.show();
+        $signUpForm.toggle();
+        $logInForm.hide();
+        $form.hide();
     });
 
     $form.on("submit", function(event) {

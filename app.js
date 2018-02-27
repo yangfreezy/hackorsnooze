@@ -32,20 +32,35 @@ $(function() {
     });
 
     $logInForm.on("submit", function() {
-        // $.ajax({
-        //     method: "POST",
-        //     url: "https://hack-or-snooze.herokuapp.com/auth",
-        //     data: {
-        //         data: {
-        //             username: "JohnSmith",
-        //             password: "johnnyboy"
-        //         }
-        //     }
-        // }).then(function(val) {
-        //     localStorage.setItem("token", val.data.token);
-        //     console.log("it worked");
-        // });
+        let token = localStorage.getItem("token");
+        $.ajax({
+            method: "POST",
+            url: "https://hack-or-snooze.herokuapp.com/auth",
+            data: {
+                data: {
+                    username: "testingagain",
+                    password: "secret"
+                }
+            }
+        }).then(function(val){
+            localStorage.setItem("token", val.data.token);
+            localStorage.setItem("username", val.data.username);
+            var username = localStorage.getItem("username");
+            $logInForm.get(0)
+            .reset();
+        }).then(function() { 
+            $.ajax({
+                method: "GET",
+                url: "https://hack-or-snooze.herokuapp.com/users/" + username,
+                headers: {
+                    Authorization: `Bearer ${token}`
+            }
+        }).then(function(val) {
+            console.log(val.data.username);
+        });
+        });
     });
+    
 
     $(".sign-up").on("click", function() {
         $signUpForm.toggle();

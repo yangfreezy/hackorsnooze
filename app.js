@@ -7,6 +7,8 @@ $(function() {
     let $signUp = $(".sign-up");
     let $signUpForm = $("#sign-up-form");
     let $articleList = $(".article-list");
+    let $username = $("#username").val();
+    let $passwordSignUp = $("#password-sign-up").val();
 
     $form.hide();
     $logInForm.hide();
@@ -15,13 +17,6 @@ $(function() {
     $(".home-link").on("click", function() {
         $form.hide();
         $("li").show();
-    });
-
-    $(".submit-link").on("click", function() {
-        $form.toggle();
-        $("li").show();
-        $logInForm.hide();
-        $signUpForm.hide();
     });
 
     $logIn.on("click", function() {
@@ -34,6 +29,29 @@ $(function() {
         $signUpForm.toggle();
         $logInForm.hide();
         $form.hide();
+    });
+
+    $(".sign-up").on("submit", function() {
+        $.ajax({
+             method: "POST",
+             url: "https://hack-or-snooze.herokuapp.com/auth",
+             data: {
+                  data: {
+                    username: "testingagain",
+                    password: "secret"
+                 }
+               }
+            }).then(function(val) {
+                 localStorage.setItem("token", val.data.token);
+        })
+    });
+    
+
+    $(".submit-link").on("click", function() {
+        $form.toggle();
+        $("li").show();
+        $logInForm.hide();
+        $signUpForm.hide();
     });
 
     $form.on("submit", function(event) {
@@ -89,4 +107,5 @@ $(function() {
     });
 
     
+
 });

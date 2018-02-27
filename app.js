@@ -12,12 +12,22 @@ $(function() {
     let $signUpButton = $(".sign-up");
     let $logInButton = $(".log-in");
     let $favoritesButton = $(".favorites-link");
+    let $navBar = $(".navbar-nav");
+    let $userProfileButton = $(".user-profile");
+    let $logOutButton = $(".log-out")
     let loggedIn = false;
+    function getLocalStorage() {
+        username = localStorage.getItem("username");
+        token = localStorage.getItem("token");
+    }
 
     $form.hide();
     $logInForm.hide();
     $signUpForm.hide();
     $submitButton.hide();
+    $logOutButton.hide();
+    $userProfileButton.hide();
+    $favoritesButton.hide();
 
     let $usernameVal = $("#username");
     let $passwordVal = $("#password");
@@ -28,6 +38,8 @@ $(function() {
     // }).then(function(val) {
     //     console.log(val);
     // });
+
+    
 
     $(".home-link").on("click", function() {
         $form.hide();
@@ -77,6 +89,10 @@ $(function() {
                     $signUpButton.hide();
                     $logInButton.hide();
                     $favoritesButton.show();
+                    // $navBar.append($("<a class='nav-item nav-link user-profile' href='#'>" + parsedPayload.username + "</a>"));
+                    $userProfileButton.text(parsedPayload.username);
+                    $userProfileButton.show();
+                    $logOutButton.show();
                     loggedIn = true;
                 });
             });
@@ -171,5 +187,18 @@ $(function() {
                 $("li").show();
             }
         }
+    });
+
+    $logOutButton.on("click", function() {
+        loggedIn = false;
+        localStorage.clear();
+        payload = null;
+        parsedPayload = null;
+        $logInButton.show();
+        $signUpButton.show();
+        $submitButton.hide();
+        $favoritesButton.hide();
+        $userProfileButton.hide();
+        $logOutButton.hide();
     });
 });

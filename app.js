@@ -16,10 +16,14 @@ $(function() {
     let $userProfileButton = $(".user-profile");
     let $logOutButton = $(".log-out")
     let loggedIn = false;
-    function getLocalStorage() {
-        username = localStorage.getItem("username");
-        token = localStorage.getItem("token");
-    }
+    let token;
+    let username;
+
+    let $usernameVal = $("#username");
+    let $passwordVal = $("#password");
+
+    let payload;
+    let parsedPayload;
 
     $form.hide();
     $logInForm.hide();
@@ -29,8 +33,77 @@ $(function() {
     $userProfileButton.hide();
     $favoritesButton.hide();
 
-    let $usernameVal = $("#username");
-    let $passwordVal = $("#password");
+    (function checkToken(token) {
+        token = localStorage.getItem("token");
+        if (token) {
+            var payload = token.split(".")[1];
+            var parsedPayload = JSON.parse(atob(payload));
+            $logInForm.hide();
+            $signUpForm.hide();
+            $submitButton.show();
+            $signUpButton.hide();
+            $logInButton.hide();
+            $favoritesButton.show();
+            // $navBar.append($("<a class='nav-item nav-link user-profile' href='#'>" + parsedPayload.username + "</a>"));
+            $userProfileButton.text(parsedPayload.username);
+            $userProfileButton.show();
+            $logOutButton.show();
+            loggedIn = true;
+            console.log("does this work")
+        }
+    })();
+
+    // function getLocalStorage() {
+    //     username = localStorage.getItem("username");
+    //     token = localStorage.getItem("token");
+    // }
+
+    function loginUser() {
+        return $.ajax({
+            method: "POST",
+            url: "https://hack-or-snooze.herokuapp.com/auth",
+            data: {
+                data: {
+                    username: $usernameVal.val(),
+                    password: $passwordVal.val()
+                }
+            }
+        }).then(function(val) {
+            localStorage.setItem("token", val.data.token);
+            localStorage.setItem("username", $usernameVal.val());
+            username = localStorage.getItem("username");
+            $logInForm.get(0).reset();
+        });
+    }
+
+    function getUser() {
+        token = localStorage.getItem("token");
+        return $.ajax({
+            method: "GET",
+            url: "https://hack-or-snooze.herokuapp.com/users/" + username,
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }).then(function() {
+            token = localStorage.getItem("token");
+            payload = token.split(".")[1];
+            parsedPayload = JSON.parse(atob(payload));
+            $logInForm.hide();
+            $signUpForm.hide();
+            $submitButton.show();
+            $signUpButton.hide();
+            $logInButton.hide();
+            $favoritesButton.show();
+            // $navBar.append($("<a class='nav-item nav-link user-profile' href='#'>" + parsedPayload.username + "</a>"));
+            $userProfileButton.text(parsedPayload.username);
+            $userProfileButton.show();
+            $logOutButton.show();
+            loggedIn = true;
+
+        });
+    }
+
+
 
     // $.ajax({
     //     method: "GET",
@@ -38,8 +111,6 @@ $(function() {
     // }).then(function(val) {
     //     console.log(val);
     // });
-
-    
 
     $(".home-link").on("click", function() {
         $form.hide();
@@ -50,52 +121,11 @@ $(function() {
         $logInForm.toggle();
         $form.hide();
         $signUpForm.hide();
+
     });
 
-    $logInForm.on("submit", function() {
-        let token;
-        let username;
-        $.ajax({
-                method: "POST",
-                url: "https://hack-or-snooze.herokuapp.com/auth",
-                data: {
-                    data: {
-                        username: $usernameVal.val(),
-                        password: $passwordVal.val()
-                    }
-                }
-            })
-            .then(function(val) {
-                localStorage.setItem("token", val.data.token);
-                localStorage.setItem("username", $usernameVal.val());
-                username = localStorage.getItem("username");
-                $logInForm.get(0).reset();
-            })
-            .then(function(username) {
-                token = localStorage.getItem("token");
-
-                $.ajax({
-                    method: "GET",
-                    url: "https://hack-or-snooze.herokuapp.com/users/" + $usernameVal.val(),
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }).then(function(val) {
-                    var payload = token.split(".")[1];
-                    var parsedPayload = JSON.parse(atob(payload));
-                    $logInForm.hide();
-                    $signUpForm.hide();
-                    $submitButton.show();
-                    $signUpButton.hide();
-                    $logInButton.hide();
-                    $favoritesButton.show();
-                    // $navBar.append($("<a class='nav-item nav-link user-profile' href='#'>" + parsedPayload.username + "</a>"));
-                    $userProfileButton.text(parsedPayload.username);
-                    $userProfileButton.show();
-                    $logOutButton.show();
-                    loggedIn = true;
-                });
-            });
+    $logInForm.on("submit", function(val) {
+        loginUser().then(getUser());
     });
 
     $(".sign-up").on("click", function() {
@@ -192,8 +222,6 @@ $(function() {
     $logOutButton.on("click", function() {
         loggedIn = false;
         localStorage.clear();
-        payload = null;
-        parsedPayload = null;
         $logInButton.show();
         $signUpButton.show();
         $submitButton.hide();

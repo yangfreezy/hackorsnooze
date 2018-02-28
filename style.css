@@ -33,20 +33,23 @@
 .btn {
     background-color: #cccccc;
 }
+
 .btn-primary {
     background-color: black;
     text-align: center;
     border: 1px solid black;
     margin: 25px;
     margin-left: 100px;
- }
- .btn-primary:hover {
+}
+
+.btn-primary:hover {
     background-color: black;
     text-align: center;
     border: 1px solid black;
     margin: 25px;
     margin-left: 100px;
- }
+}
+
 ol li {
     font-size: 14px;
 }
@@ -65,9 +68,7 @@ li a:hover {
     color: grey;
 }
 
-.log-in {
-
-}
+.log-in {}
 
 #log-in-form {
     margin: 2rem;
@@ -84,8 +85,8 @@ li a:hover {
     text-align: center;
     font-size: 16px;
     margin-top: 3rem;
-    font-weight:bold;
-    display:hide;
+    font-weight: bold;
+    display: hide;
 }
 
 #user-profile-name {
@@ -95,10 +96,12 @@ li a:hover {
     text-align: center;
     font-size: 16px;
     margin-top: 3rem;
-    font-weight:bold;
-    display:hide;
+    font-weight: bold;
+    display: hide;
 }
 
 .user-profile-bold {
     font-weight: bold;
+    background-color: white;
+    border-radius: 5px;
 }

@@ -27,6 +27,7 @@ $(function() {
     let parsedPayload;
     let $userArticleList = $(".user-article-ol");
     let gotUserStories = 0;
+    let $deleteUserStory = $(".delete-user-story");
 
     $form.hide();
     $logInForm.hide();
@@ -40,7 +41,7 @@ $(function() {
     $userArticleList.hide();
     $articleList.show();
 
-    (function checkToken(token) {
+    function checkToken() {
         token = localStorage.getItem("token");
         if (token) {
             var payload = token.split(".")[1];
@@ -59,7 +60,8 @@ $(function() {
             $userProfileUsername.text(parsedPayload.username);
             $userProfileName.text(localStorage.getItem("name"));
         }
-    })();
+    }
+    checkToken(token);
 
     // function getLocalStorage() {
     //     username = localStorage.getItem("username");
@@ -80,22 +82,16 @@ $(function() {
                     .prop("href", url)
                     .prop("hostname");
 
-                $(".article-ol").append(
-                    $(
-                        "<li id=" +
-                        storyId +
-                        "><span><i class='far fa-star'></i></span><a href=' " +
-                        url +
-                        "' target='_blank'> " +
-                        title +
-                        ", by " +
-                        author +
-                        " (" +
-                        hostNameStory +
-                        ")" +
-                        "</a></li>"
-                    )
-                );
+                let storyStr = `
+                    <li id= ${storyId}>
+                        <span>
+                            <i class='far fa-star'></i>
+                        </span>
+                        <a href=${url}target='_blank'> ${title} by ${author} (${hostNameStory})</a>
+                    </li>
+                    `;
+
+                $(".article-ol").append($(storyStr));
             }
         });
     };
@@ -107,8 +103,8 @@ $(function() {
             url: "https://hack-or-snooze.herokuapp.com/stories"
         }).then(function(val) {
             token = localStorage.getItem("token");
-                var payload = token.split(".")[1];
-                var parsedPayload = JSON.parse(atob(payload));            
+            var payload = token.split(".")[1];
+            var parsedPayload = JSON.parse(atob(payload));
             for (let i = 0; i < val.data.length; i++) {
                 if (val.data[i].username === parsedPayload.username) {
                     let title = val.data[i].title;
@@ -118,21 +114,21 @@ $(function() {
                     let hostNameStory = $("<a>")
                         .prop("href", url)
                         .prop("hostname");
-    
+
                     let str = `
                     <li id= ${storyId}>
                         <span>
                             <i class='far fa-star'></i>
                         </span>
-                        <a href=${url}target='_blank'> ${title} by ${author} (${hostNameStory})</a>
+                        <a href=${url}target='_blank'> ${title} by ${author} (${hostNameStory})</a><button class="delete-user-story">X</button>
                     </li>
-                    `
+                    `;
 
                     $(".user-article-ol").append($(str));
                 }
             }
         });
-    };
+    }
 
     function loginUser() {
         return $.ajax({
@@ -270,10 +266,10 @@ $(function() {
             .parent()
             .parent()
             .attr("id");
-            $(this).toggleClass("far fa-star fas fa-star");
-                $(this)
-                    .closest("li")
-                    .toggleClass("favorited");
+        $(this).toggleClass("far fa-star fas fa-star");
+        $(this)
+            .closest("li")
+            .toggleClass("favorited");
 
         if (loggedIn) {
             return $.ajax({
@@ -290,8 +286,7 @@ $(function() {
                     parsedPayload.username +
                     "/favorites/" +
                     storyId
-            }).then(function(val) {
-            });
+            }).then(function(val) {});
         }
     });
 
@@ -315,6 +310,7 @@ $(function() {
     });
 
     $userProfileButton.on("click", function() {
+        checkToken();
         $userProfileUsername.toggle();
         $userProfileName.toggle();
         $form.hide();
@@ -325,6 +321,24 @@ $(function() {
         $userProfileButton.toggleClass("user-profile-bold");
         $userArticleList.toggle();
         $articleOrderedList.toggle();
+
+        $userArticleList.on("click", "button", function() {
+            checkToken();
+            token = localStorage.getItem("token");
+            let storyId = $(this)
+                .closest("li")
+                .attr("id");
+            $(this)
+                .closest("li")
+                .remove();
+            return $.ajax({
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+                url: "https://hack-or-snooze.herokuapp.com/stories/" + storyId
+            }).then(function() {});
+        });
     });
 
     $logOutButton.on("click", function() {
@@ -336,6 +350,5 @@ $(function() {
         $favoritesButton.hide();
         $userProfileButton.hide();
         $logOutButton.hide();
-        
     });
 });

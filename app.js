@@ -1,21 +1,25 @@
 $(function() {
-    let $form = $(".submit-form");
+    // VARIABLES FOR BUTTONS
     let $logIn = $(".log-in");
+    let $submitButton = $(".submit-link");
+    let $signUpButton = $(".sign-up");
+    let $logInButton = $(".log-in");
+    let $favoritesButton = $(".favorites-link");
+    let $userProfileButton = $(".user-profile");
+    let $logOutButton = $(".log-out");
+
+    // VARIABLES FOR FORMS
+    let $form = $(".submit-form");
     let $logInForm = $("#log-in-form");
-    let $signUp = $(".sign-up");
     let $signUpForm = $("#sign-up-form");
+
+    //VARIABLES FOR ARTICLES
     let $articleList = $(".article-list");
     let $articleOrderedList = $(".article-ol");
     let $username = $("#username-sign-up");
     let $passwordSignUp = $("#password-sign-up");
     let $name = $("#name-sign-up");
-    let $submitButton = $(".submit-link");
-    let $signUpButton = $(".sign-up");
-    let $logInButton = $(".log-in");
-    let $favoritesButton = $(".favorites-link");
-    let $navBar = $(".navbar-nav");
-    let $userProfileButton = $(".user-profile");
-    let $logOutButton = $(".log-out");
+
     let $userProfileName = $("#user-profile-name");
     let $userProfileUsername = $("#user-profile-username");
     let loggedIn = false;
@@ -27,8 +31,8 @@ $(function() {
     let parsedPayload;
     let $userArticleList = $(".user-article-ol");
     let gotUserStories = 0;
-    let $deleteUserStory = $(".delete-user-story");
 
+    // HIDE ALL BUTTONS ON START EXCEPT FOR ARTICLES
     $form.hide();
     $logInForm.hide();
     $signUpForm.hide();
@@ -52,7 +56,6 @@ $(function() {
             $signUpButton.hide();
             $logInButton.hide();
             $favoritesButton.show();
-            // $navBar.append($("<a class='nav-item nav-link user-profile' href='#'>" + parsedPayload.username + "</a>"));
             $userProfileButton.text(parsedPayload.username);
             $userProfileButton.show();
             $logOutButton.show();
@@ -62,11 +65,6 @@ $(function() {
         }
     }
     checkToken(token);
-
-    // function getLocalStorage() {
-    //     username = localStorage.getItem("username");
-    //     token = localStorage.getItem("token");
-    // }
 
     var getStories = function getStories() {
         return $.ajax({
@@ -130,6 +128,31 @@ $(function() {
         });
     }
 
+    function createStory() {
+        let $title = $("#inputTitle");
+        let $author = $("#inputAuthor");
+        let $url = $("#inputUrl");
+        let token = localStorage.getItem("token");
+
+        return $.ajax({
+            method: "POST",
+            url: "https://hack-or-snooze.herokuapp.com/stories",
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
+            data: {
+                data: {
+                    username: localStorage.getItem("username"),
+                    author: $author.val(),
+                    title: $title.val(),
+                    url: $url.val()
+                }
+            }
+        }).then(function(val) {
+            getStories();
+        });
+    }
+
     function loginUser() {
         return $.ajax({
             method: "POST",
@@ -173,31 +196,7 @@ $(function() {
         });
     }
 
-    function createStory() {
-        let $title = $("#inputTitle");
-        let $author = $("#inputAuthor");
-        let $url = $("#inputUrl");
-        let token = localStorage.getItem("token");
-
-        return $.ajax({
-            method: "POST",
-            url: "https://hack-or-snooze.herokuapp.com/stories",
-            headers: {
-                Authorization: `Bearer ${token}`
-            },
-            data: {
-                data: {
-                    username: localStorage.getItem("username"),
-                    author: $author.val(),
-                    title: $title.val(),
-                    url: $url.val()
-                }
-            }
-        }).then(function(val) {
-            getStories();
-        });
-    }
-
+    // EVENT LISTENERS FOR BUTTONS ON NAV BAR: HOME LINK, LOG IN, SIGN UP, SUBMIT
     $(".home-link").on("click", function() {
         $form.hide();
         $("li").show();
@@ -209,16 +208,69 @@ $(function() {
         $signUpForm.hide();
     });
 
-    $logInForm.on("submit", function(val) {
-        loginUser().then(function() {
-            getUser();
-        });
-    });
-
     $(".sign-up").on("click", function() {
         $signUpForm.toggle();
         $logInForm.hide();
         $form.hide();
+    });
+
+    $submitButton.on("click", function() {
+        $form.toggle();
+        $("li").show();
+        $logInForm.hide();
+        $signUpForm.hide();
+        $userProfileName.hide();
+        $userProfileUsername.hide();
+    });
+
+    $userProfileButton.on("click", function() {
+        checkToken();
+        $userProfileUsername.toggle();
+        $userProfileName.toggle();
+        $form.hide();
+        if (gotUserStories === 0) {
+            getUserStories();
+            gotUserStories++;
+        }
+        $userProfileButton.toggleClass("user-profile-bold");
+        $userArticleList.toggle();
+        $articleOrderedList.toggle();
+
+        $userArticleList.on("click", "button", function() {
+            checkToken();
+            token = localStorage.getItem("token");
+            let storyId = $(this)
+                .closest("li")
+                .attr("id");
+            $(this)
+                .closest("li")
+                .remove();
+            return $.ajax({
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+                url: "https://hack-or-snooze.herokuapp.com/stories/" + storyId
+            }).then(function() {});
+        });
+    });
+
+    $logOutButton.on("click", function() {
+        loggedIn = false;
+        localStorage.clear();
+        $logInButton.show();
+        $signUpButton.show();
+        $submitButton.hide();
+        $favoritesButton.hide();
+        $userProfileButton.hide();
+        $logOutButton.hide();
+    });
+
+    // EVENT LISTENERS FOR FORMS: LOG IN, SIGN UP, AND SUBMIT NEW STORY
+    $logInForm.on("submit", function(val) {
+        loginUser().then(function() {
+            getUser();
+        });
     });
 
     $signUpForm.on("submit", function() {
@@ -243,21 +295,14 @@ $(function() {
             .reset();
     });
 
-    $submitButton.on("click", function() {
-        $form.toggle();
-        $("li").show();
-        $logInForm.hide();
-        $signUpForm.hide();
-        $userProfileName.hide();
-        $userProfileUsername.hide();
-    });
-
     $form.on("submit", function(event) {
         event.preventDefault();
         createStory();
         $form.slideUp("slow");
+        getUserStories();
     });
 
+    // EVENT LISTENER FOR FAVORITE STORIES
     $("ol").on("click", ".fa-star", function() {
         token = localStorage.getItem("token");
         payload = token.split(".")[1];
@@ -307,48 +352,5 @@ $(function() {
                 $("li").show();
             }
         }
-    });
-
-    $userProfileButton.on("click", function() {
-        checkToken();
-        $userProfileUsername.toggle();
-        $userProfileName.toggle();
-        $form.hide();
-        if (gotUserStories === 0) {
-            getUserStories();
-            gotUserStories++;
-        }
-        $userProfileButton.toggleClass("user-profile-bold");
-        $userArticleList.toggle();
-        $articleOrderedList.toggle();
-
-        $userArticleList.on("click", "button", function() {
-            checkToken();
-            token = localStorage.getItem("token");
-            let storyId = $(this)
-                .closest("li")
-                .attr("id");
-            $(this)
-                .closest("li")
-                .remove();
-            return $.ajax({
-                method: "DELETE",
-                headers: {
-                    Authorization: `Bearer ${token}`
-                },
-                url: "https://hack-or-snooze.herokuapp.com/stories/" + storyId
-            }).then(function() {});
-        });
-    });
-
-    $logOutButton.on("click", function() {
-        loggedIn = false;
-        localStorage.clear();
-        $logInButton.show();
-        $signUpButton.show();
-        $submitButton.hide();
-        $favoritesButton.hide();
-        $userProfileButton.hide();
-        $logOutButton.hide();
     });
 });

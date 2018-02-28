@@ -18,10 +18,8 @@ $(function() {
     let loggedIn = false;
     let token;
     let username;
-
     let $usernameVal = $("#username");
     let $passwordVal = $("#password");
-
     let payload;
     let parsedPayload;
 
@@ -49,7 +47,7 @@ $(function() {
             $userProfileButton.show();
             $logOutButton.show();
             loggedIn = true;
-            console.log("does this work")
+            
         }
     })();
 
@@ -57,6 +55,37 @@ $(function() {
     //     username = localStorage.getItem("username");
     //     token = localStorage.getItem("token");
     // }
+
+    var getStories = function getStories() {
+        return $.ajax({
+            method: "GET",
+            url: "https://hack-or-snooze.herokuapp.com/stories"
+        }).then(function(val) {
+            for (let i = 0; i < val.data.length; i++) {
+                let title = val.data[i].title;
+                let author = val.data[i].author;
+                let url = val.data[i].url;
+                let hostNameStory = $("<a>")
+            .prop("href", url)
+            .prop("hostname");
+
+        $("ol").append(
+            $(
+                "<li><span><i class='far fa-star'></i></span><a href=' " +
+                url +
+                "' target='_blank'> " +
+                title +", by "  + author + 
+                " (" +
+                hostNameStory +
+                ")" +
+                "</a></li>"
+            )
+        );
+            }
+        });
+    };
+    getStories();
+
 
     function loginUser() {
         return $.ajax({
@@ -77,7 +106,6 @@ $(function() {
     }
 
     function getUser() {
-        token = localStorage.getItem("token");
         return $.ajax({
             method: "GET",
             url: "https://hack-or-snooze.herokuapp.com/users/" + username,
@@ -103,14 +131,30 @@ $(function() {
         });
     }
 
+    function createStory() {
+        let $title = $("#inputTitle");
+        let $author = $("#inputAuthor");
+        let $url = $("#inputUrl");
+        let token = localStorage.getItem("token");
 
-
-    // $.ajax({
-    //     method: "GET",
-    //     url: "https://hack-or-snooze.herokuapp.com/stories"
-    // }).then(function(val) {
-    //     console.log(val);
-    // });
+        return $.ajax({
+            method: "POST",
+            url: "https://hack-or-snooze.herokuapp.com/stories",
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
+            data: {
+                data: {
+                    username: localStorage.getItem("username"),
+                    author: $author.val(),
+                    title: $title.val(),
+                    url: $url.val()
+                }
+            }
+        }).then(function(val) {
+            getStories();
+        })
+    };
 
     $(".home-link").on("click", function() {
         $form.hide();
@@ -125,7 +169,9 @@ $(function() {
     });
 
     $logInForm.on("submit", function(val) {
-        loginUser().then(getUser());
+        loginUser().then(function() {
+            getUser()
+        });
     });
 
     $(".sign-up").on("click", function() {
@@ -165,29 +211,7 @@ $(function() {
 
     $form.on("submit", function(event) {
         event.preventDefault();
-
-        let title = $("#inputTitle").val();
-        let url = $("#inputUrl").val();
-        let hostName = $("<a>")
-            .prop("href", url)
-            .prop("hostname");
-
-        $("ol").append(
-            $(
-                "<li><span><i class='far fa-star'></i></span><a href=' " +
-                url +
-                "' target='_blank'> " +
-                title +
-                " (" +
-                hostName +
-                ")" +
-                "</a></li>"
-            )
-        );
-
-        $("#inputTitle").val("");
-        $("#inputUrl").val("");
-
+        createStory();
         $form.slideUp("slow");
     });
 
@@ -217,6 +241,10 @@ $(function() {
                 $("li").show();
             }
         }
+    });
+
+    $userProfileButton.on("click", function() {
+        
     });
 
     $logOutButton.on("click", function() {

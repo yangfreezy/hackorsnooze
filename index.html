@@ -24,7 +24,7 @@
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
                     <a class="nav-item nav-link submit-link" href="#">submit </a>
-                    <a class="nav-item nav-link favorites-link" data-text-swap="favorites" href="#">favorites</a>
+                    <a class="nav-item nav-link favorites-link" data-text-swap="favorites" href="#">all</a>
                     <a class="nav-item nav-link log-in" href="#">log in</a>
                     <a class="nav-item nav-link sign-up" href="#">sign up</a>
                     <a class='nav-item nav-link user-profile' href='#'></a>
@@ -38,13 +38,16 @@
             <form class="form-horizontal mx-auto">
                 <div class="form-group row">
                     <label for="exampleInputTitle" class="control-label">title</label>
-                    <input type="title" required="required" class="form-control" id="inputTitle" placeholder="enter title here">
+                    <input type="text" required="required" class="form-control" id="inputTitle" placeholder="enter title here">
+                </div>
+                <div class="form-group row">
+                    <label for="exampleInputAuthor" class="control-label">author</label>
+                    <input type="text" required="required" class="form-control" id="inputAuthor" placeholder="enter author">
                 </div>
                 <div class="form-group row">
                     <label for="exampleInputUrl" class="control-label">url</label>
                     <input type="url" required="required" class="form-control" id="inputUrl" placeholder="enter url here">
                 </div>
-
                 <button type="submit" class="btn">submit</button>
 
             </form>

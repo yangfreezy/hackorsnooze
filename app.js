@@ -216,12 +216,31 @@ $(function() {
     });
 
     $("ol").on("click", ".fa-star", function() {
+        token = localStorage.getItem("token");
+        payload = token.split(".")[1];
+        parsedPayload = JSON.parse(atob(payload));
         if (loggedIn) {
             $(this).toggleClass("far fa-star fas fa-star");
             $(this)
                 .closest("li")
                 .toggleClass("favorited");
         }
+        // $.ajax({
+        //     method: "POST",
+        //     data: {
+        //         data: {
+        //             username: ,
+        //         }
+        //     },
+        //     header: {
+        //         Authorization: `Bearer ${token}`
+        //     },
+        //     url: "https://hack-or-snooze.herokuapp.com/users/" + parsedPayload.username + "/favorites/" + $storyId
+            
+        // }).then(function(val) {
+        //     console.log(val);
+        //     }
+        // );
     });
 
     let $favorites = $(".favorites-link");
@@ -241,10 +260,11 @@ $(function() {
                 $("li").show();
             }
         }
+        
     });
 
     $userProfileButton.on("click", function() {
-        
+
     });
 
     $logOutButton.on("click", function() {

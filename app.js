@@ -14,7 +14,7 @@ $(function() {
     let $favoritesButton = $(".favorites-link");
     let $navBar = $(".navbar-nav");
     let $userProfileButton = $(".user-profile");
-    let $logOutButton = $(".log-out")
+    let $logOutButton = $(".log-out");
     let loggedIn = false;
     let token;
     let username;
@@ -47,7 +47,6 @@ $(function() {
             $userProfileButton.show();
             $logOutButton.show();
             loggedIn = true;
-            
         }
     })();
 
@@ -66,26 +65,27 @@ $(function() {
                 let author = val.data[i].author;
                 let url = val.data[i].url;
                 let hostNameStory = $("<a>")
-            .prop("href", url)
-            .prop("hostname");
+                    .prop("href", url)
+                    .prop("hostname");
 
-        $("ol").append(
-            $(
-                "<li><span><i class='far fa-star'></i></span><a href=' " +
-                url +
-                "' target='_blank'> " +
-                title +", by "  + author + 
-                " (" +
-                hostNameStory +
-                ")" +
-                "</a></li>"
-            )
-        );
+                $("ol").append(
+                    $(
+                        "<li><span><i class='far fa-star'></i></span><a href=' " +
+                        url +
+                        "' target='_blank'> " +
+                        title +
+                        ", by " +
+                        author +
+                        " (" +
+                        hostNameStory +
+                        ")" +
+                        "</a></li>"
+                    )
+                );
             }
         });
     };
     getStories();
-
 
     function loginUser() {
         return $.ajax({
@@ -102,10 +102,13 @@ $(function() {
             localStorage.setItem("username", $usernameVal.val());
             username = localStorage.getItem("username");
             $logInForm.get(0).reset();
+            console.log("testing");
         });
     }
 
     function getUser() {
+        token = localStorage.getItem("token");
+
         return $.ajax({
             method: "GET",
             url: "https://hack-or-snooze.herokuapp.com/users/" + username,
@@ -113,7 +116,6 @@ $(function() {
                 Authorization: `Bearer ${token}`
             }
         }).then(function() {
-            token = localStorage.getItem("token");
             payload = token.split(".")[1];
             parsedPayload = JSON.parse(atob(payload));
             $logInForm.hide();
@@ -127,7 +129,7 @@ $(function() {
             $userProfileButton.show();
             $logOutButton.show();
             loggedIn = true;
-
+            console.log("hi");
         });
     }
 
@@ -153,8 +155,8 @@ $(function() {
             }
         }).then(function(val) {
             getStories();
-        })
-    };
+        });
+    }
 
     $(".home-link").on("click", function() {
         $form.hide();
@@ -165,12 +167,11 @@ $(function() {
         $logInForm.toggle();
         $form.hide();
         $signUpForm.hide();
-
     });
 
     $logInForm.on("submit", function(val) {
         loginUser().then(function() {
-            getUser()
+            getUser();
         });
     });
 
@@ -236,7 +237,7 @@ $(function() {
         //         Authorization: `Bearer ${token}`
         //     },
         //     url: "https://hack-or-snooze.herokuapp.com/users/" + parsedPayload.username + "/favorites/" + $storyId
-            
+
         // }).then(function(val) {
         //     console.log(val);
         //     }
@@ -260,12 +261,9 @@ $(function() {
                 $("li").show();
             }
         }
-        
     });
 
-    $userProfileButton.on("click", function() {
-
-    });
+    $userProfileButton.on("click", function() {});
 
     $logOutButton.on("click", function() {
         loggedIn = false;

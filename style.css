@@ -76,3 +76,25 @@ li a:hover {
 #sign-up-form {
     margin: 2rem;
 }
+
+#user-profile-username {
+    height: 3rem;
+    color: black;
+    display: hidden;
+    text-align: center;
+    font-size: 16px;
+    margin-top: 3rem;
+    font-weight:bold;
+    display:hide;
+}
+
+#user-profile-name {
+    height: 3rem;
+    color: black;
+    display: hidden;
+    text-align: center;
+    font-size: 16px;
+    margin-top: 3rem;
+    font-weight:bold;
+    display:hide;
+}

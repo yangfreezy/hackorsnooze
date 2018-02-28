@@ -5,6 +5,7 @@ $(function() {
     let $signUp = $(".sign-up");
     let $signUpForm = $("#sign-up-form");
     let $articleList = $(".article-list");
+    let $articleOrderedList = $(".article-ol");
     let $username = $("#username-sign-up");
     let $passwordSignUp = $("#password-sign-up");
     let $name = $("#name-sign-up");
@@ -15,6 +16,8 @@ $(function() {
     let $navBar = $(".navbar-nav");
     let $userProfileButton = $(".user-profile");
     let $logOutButton = $(".log-out");
+    let $userProfileName = $("#user-profile-name");
+    let $userProfileUsername = $("#user-profile-username");
     let loggedIn = false;
     let token;
     let username;
@@ -30,6 +33,8 @@ $(function() {
     $logOutButton.hide();
     $userProfileButton.hide();
     $favoritesButton.hide();
+    $userProfileName.hide();
+    $userProfileUsername.hide();
 
     (function checkToken(token) {
         token = localStorage.getItem("token");
@@ -47,6 +52,8 @@ $(function() {
             $userProfileButton.show();
             $logOutButton.show();
             loggedIn = true;
+            $userProfileUsername.text(parsedPayload.username);
+            $userProfileName.text(localStorage.getItem("name"));
         }
     })();
 
@@ -116,7 +123,8 @@ $(function() {
             headers: {
                 Authorization: `Bearer ${token}`
             }
-        }).then(function() {
+        }).then(function(val) {
+            localStorage.setItem("name", val.data.name);
             payload = token.split(".")[1];
             parsedPayload = JSON.parse(atob(payload));
             $logInForm.hide();
@@ -125,7 +133,6 @@ $(function() {
             $signUpButton.hide();
             $logInButton.hide();
             $favoritesButton.show();
-            // $navBar.append($("<a class='nav-item nav-link user-profile' href='#'>" + parsedPayload.username + "</a>"));
             $userProfileButton.text(parsedPayload.username);
             $userProfileButton.show();
             $logOutButton.show();
@@ -224,7 +231,10 @@ $(function() {
             .parent()
             .parent()
             .attr("id");
-        console.log(token);
+            $(this).toggleClass("far fa-star fas fa-star");
+                $(this)
+                    .closest("li")
+                    .toggleClass("favorited");
 
         if (loggedIn) {
             return $.ajax({
@@ -242,10 +252,6 @@ $(function() {
                     "/favorites/" +
                     storyId
             }).then(function(val) {
-                $(this).toggleClass("far fa-star fas fa-star");
-                $(this)
-                    .closest("li")
-                    .toggleClass("favorited");
             });
         }
     });
@@ -269,7 +275,10 @@ $(function() {
         }
     });
 
-    $userProfileButton.on("click", function() {});
+    $userProfileButton.on("click", function() {
+        $userProfileUsername.toggle();
+        $userProfileName.toggle();
+    });
 
     $logOutButton.on("click", function() {
         loggedIn = false;
@@ -280,5 +289,6 @@ $(function() {
         $favoritesButton.hide();
         $userProfileButton.hide();
         $logOutButton.hide();
+        
     });
 });

@@ -98,3 +98,7 @@ li a:hover {
     font-weight:bold;
     display:hide;
 }
+
+.user-profile-bold {
+    font-weight: bold;
+}

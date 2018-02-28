@@ -26,6 +26,7 @@ $(function() {
     let payload;
     let parsedPayload;
     let $userArticleList = $(".user-article-ol");
+    let gotUserStories = 0;
 
     $form.hide();
     $logInForm.hide();
@@ -36,7 +37,8 @@ $(function() {
     $favoritesButton.hide();
     $userProfileName.hide();
     $userProfileUsername.hide();
-    // $userArticleList.hide();
+    $userArticleList.hide();
+    $articleList.show();
 
     (function checkToken(token) {
         token = localStorage.getItem("token");
@@ -78,7 +80,7 @@ $(function() {
                     .prop("href", url)
                     .prop("hostname");
 
-                $("ol").append(
+                $(".article-ol").append(
                     $(
                         "<li id=" +
                         storyId +
@@ -99,44 +101,38 @@ $(function() {
     };
     getStories();
 
-    // function getUserStories() {
-    //     return $.ajax({
-    //         method: "GET",
-    //         url: "https://hack-or-snooze.herokuapp.com/stories"
-    //     }).then(function(val) {
-    //         token = localStorage.getItem("token");
-    //             var payload = token.split(".")[1];
-    //             var parsedPayload = JSON.parse(atob(payload));            
-    //         for (let i = 0; i < val.data.length; i++) {
-    //             if (val.data[i].username === parsedPayload.username) {
-    //                 let title = val.data[i].title;
-    //                 let author = val.data[i].author;
-    //                 let url = val.data[i].url;
-    //                 let storyId = val.data[i].storyId;
-    //                 let hostNameStory = $("<a>")
-    //                     .prop("href", url)
-    //                     .prop("hostname");
+    function getUserStories() {
+        return $.ajax({
+            method: "GET",
+            url: "https://hack-or-snooze.herokuapp.com/stories"
+        }).then(function(val) {
+            token = localStorage.getItem("token");
+                var payload = token.split(".")[1];
+                var parsedPayload = JSON.parse(atob(payload));            
+            for (let i = 0; i < val.data.length; i++) {
+                if (val.data[i].username === parsedPayload.username) {
+                    let title = val.data[i].title;
+                    let author = val.data[i].author;
+                    let url = val.data[i].url;
+                    let storyId = val.data[i].storyId;
+                    let hostNameStory = $("<a>")
+                        .prop("href", url)
+                        .prop("hostname");
     
-    //                 $(".user-article-ol").append(
-    //                     $(
-    //                         "<li id=" +
-    //                         storyId +
-    //                         "><span><i class='far fa-star'></i></span><a href=' " +
-    //                         url +
-    //                         "' target='_blank'> " +
-    //                         title +
-    //                         ", by " +
-    //                         author +
-    //                         " (" +
-    //                         hostNameStory +
-    //                         ")" +
-    //                         "</a></li>"
-    //                     )
-    //                 );
-    //             }
-    //         }
-    //     });
-    // };
+                    let str = `
+                    <li id= ${storyId}>
+                        <span>
+                            <i class='far fa-star'></i>
+                        </span>
+                        <a href=${url}target='_blank'> ${title} by ${author} (${hostNameStory})</a>
+                    </li>
+                    `
+
+                    $(".user-article-ol").append($(str));
+                }
+            }
+        });
+    };
 
     function loginUser() {
         return $.ajax({
@@ -322,9 +318,13 @@ $(function() {
         $userProfileUsername.toggle();
         $userProfileName.toggle();
         $form.hide();
-        // getUserStories();
-        // $articleList.toggle();
-        // $userArticleList.toggle();
+        if (gotUserStories === 0) {
+            getUserStories();
+            gotUserStories++;
+        }
+        $userProfileButton.toggleClass("user-profile-bold");
+        $userArticleList.toggle();
+        $articleOrderedList.toggle();
     });
 
     $logOutButton.on("click", function() {

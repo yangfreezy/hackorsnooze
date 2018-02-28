@@ -25,6 +25,7 @@ $(function() {
     let $passwordVal = $("#password");
     let payload;
     let parsedPayload;
+    let $userArticleList = $(".user-article-ol");
 
     $form.hide();
     $logInForm.hide();
@@ -35,6 +36,7 @@ $(function() {
     $favoritesButton.hide();
     $userProfileName.hide();
     $userProfileUsername.hide();
+    // $userArticleList.hide();
 
     (function checkToken(token) {
         token = localStorage.getItem("token");
@@ -96,6 +98,45 @@ $(function() {
         });
     };
     getStories();
+
+    // function getUserStories() {
+    //     return $.ajax({
+    //         method: "GET",
+    //         url: "https://hack-or-snooze.herokuapp.com/stories"
+    //     }).then(function(val) {
+    //         token = localStorage.getItem("token");
+    //             var payload = token.split(".")[1];
+    //             var parsedPayload = JSON.parse(atob(payload));            
+    //         for (let i = 0; i < val.data.length; i++) {
+    //             if (val.data[i].username === parsedPayload.username) {
+    //                 let title = val.data[i].title;
+    //                 let author = val.data[i].author;
+    //                 let url = val.data[i].url;
+    //                 let storyId = val.data[i].storyId;
+    //                 let hostNameStory = $("<a>")
+    //                     .prop("href", url)
+    //                     .prop("hostname");
+    
+    //                 $(".user-article-ol").append(
+    //                     $(
+    //                         "<li id=" +
+    //                         storyId +
+    //                         "><span><i class='far fa-star'></i></span><a href=' " +
+    //                         url +
+    //                         "' target='_blank'> " +
+    //                         title +
+    //                         ", by " +
+    //                         author +
+    //                         " (" +
+    //                         hostNameStory +
+    //                         ")" +
+    //                         "</a></li>"
+    //                     )
+    //                 );
+    //             }
+    //         }
+    //     });
+    // };
 
     function loginUser() {
         return $.ajax({
@@ -215,6 +256,8 @@ $(function() {
         $("li").show();
         $logInForm.hide();
         $signUpForm.hide();
+        $userProfileName.hide();
+        $userProfileUsername.hide();
     });
 
     $form.on("submit", function(event) {
@@ -278,6 +321,10 @@ $(function() {
     $userProfileButton.on("click", function() {
         $userProfileUsername.toggle();
         $userProfileName.toggle();
+        $form.hide();
+        // getUserStories();
+        // $articleList.toggle();
+        // $userArticleList.toggle();
     });
 
     $logOutButton.on("click", function() {
